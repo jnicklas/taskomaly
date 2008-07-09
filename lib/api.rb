@@ -33,6 +33,35 @@ module Taskomaly
     
     def key;  @config['key'];  end
     
+    private
+    
+    def base_payload method_name, extra_data = nil
+      params = ''
+      extra_data = [ extra_data ] if extra_data and extra_data.class != Array
+      if extra_data
+        extra_data.each do |data|
+          type = (data.class == Fixnum) ? 'integer' : 'string'
+          params += "<param><value><#{type}>#{data}</#{type}></value></param>"          
+        end
+      end
+      <<-XML
+      <methodCall><methodName>#{method_name}</methodName>
+      <params>
+      <param><value><int>#{user}</int></value></param>
+      <param><value><string>#{key}</string></value></param>
+      #{params}
+      </params></methodCall> 
+      XML
+    end
+    
+    def get_papers_payload
+      base_payload 'papers'
+    end
+    
+    def get_paper_payload paper_name
+      base_payload 'paper', paper_name
+    end
+    
   end
   
 end

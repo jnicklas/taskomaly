@@ -42,6 +42,33 @@ describe "Taskomaly::API" do
     t = Taskomaly::API.new :config => API_CONFIG_LOCATION
     t.respond_to?( :response, true ).should == true
   end
+  
+  it "should format a base payload correctly" do
+    xml = <<-XML
+    <methodCall><methodName>test_method</methodName>
+    <params>
+    <param><value><int>#{API_CONFIG_USER}</int></value></param>
+    <param><value><string>#{API_CONFIG_KEY}</string></value></param>
+    </params></methodCall>
+    XML
+    t = Taskomaly::API.new :config => API_CONFIG_LOCATION
+    t.send( :base_payload, 'test_method' ).gsub(/[ \n]/, '').should == xml.strip.gsub(/[ \n]/, '')
+  end
+  
+  it "should format any parameters into a payload correctly" do
+    xml = <<-XML
+    <methodCall><methodName>test_method</methodName>
+    <params>
+    <param><value><int>#{API_CONFIG_USER}</int></value></param>
+    <param><value><string>#{API_CONFIG_KEY}</string></value></param>
+    <param><value><string>this is a test</string></value></param>
+    <param><value><integer>37</integer></value></param>
+    <param><value><string>signals</string></value></param>
+    </params></methodCall>
+    XML
+    t = Taskomaly::API.new :config => API_CONFIG_LOCATION
+    t.send( :base_payload, 'test_method', [ 'this is a test', 37, 'signals' ] ).gsub(/[ \n]/, '').should == xml.strip.gsub(/[ \n]/, '')
+  end
 
   it "can retrieve a response from the server" do
     pending "Not done yet"
