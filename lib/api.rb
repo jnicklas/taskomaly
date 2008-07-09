@@ -1,10 +1,14 @@
 require 'yaml'
+require 'rest_client'
 
 module Taskomaly
   
+  SERVICE = 'http://taskodone.com/api'
+  SUPPORTED_ACTIONS = [ :papers, :paper, :rename, :edit, :new, :delete ]
+  
   class API
     
-    attr_accessor :response
+    attr_reader :response
     
     # Creates an instance of the API processor with +hash+ passed a set of configuration
     # options in a hash. +hash+ should either be a Tasko user ID and API key (in this case
@@ -32,12 +36,23 @@ module Taskomaly
     def user; @config['user']; end
     
     def key;  @config['key'];  end
-    
+        
+    def request type, *args
+      raise ArgumentError, "invalid send request type #{type}" unless SUPPORTED_ACTIONS.include? type
+
+      begin
+        req = RestClient::Resource.new SERVICE
+        @response = req.send :post, (base_payload type, *args)
+      rescue
+        raise RuntimeError, 'there was an error sending your request'
+      end
+    end
+
     private
-    
-    def base_payload method_name, data = nil
+  
+    def base_payload method_name, *args
       params = ''
-      extra_data = ([] << data).flatten.compact
+      extra_data = ([] << args).flatten.compact
       if extra_data
         extra_data.each do |data|
           type = (data.class == Fixnum) ? 'integer' : 'string'
@@ -52,14 +67,6 @@ module Taskomaly
       #{params}
       </params></methodCall> 
       XML
-    end
-    
-    def get_papers_payload
-      base_payload 'papers'
-    end
-    
-    def get_paper_payload paper_name
-      base_payload 'paper', paper_name
     end
     
   end
