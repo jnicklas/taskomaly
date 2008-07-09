@@ -75,11 +75,35 @@ describe "Taskomaly::API" do
   end
   
   it "must raise an error if the server is unavailable" do
-    pending "Not done yet"
+    t = Taskomaly::API.new :config => API_CONFIG_LOCATION
+
+    request = mock('RestClient::Resource')
+    request.expects(:send).with( :post, t.send( :base_payload, 'papers' ) ).raises(SocketError)
+    
+    t.stubs(:request_generator).returns(request)
+    lambda { t.request :papers }.should raise_error(RuntimeError, 'the site appears to be unavailable')
   end
 
   it "can retrieve a response from the server" do
-    pending "Not done yet"
+    xml = <<-XML
+    <?xml version='1.0' encoding='UTF-8'?>
+    <methodResponse>
+    	<params><param><value><array><data>
+    		<value><string>Paper One</string></value>
+    		<value><string>Paper Two</string></value>
+    	</data></array></value></param></params>
+    </methodResponse>
+    XML
+    
+    t = Taskomaly::API.new :config => API_CONFIG_LOCATION
+    
+    request = mock('RestClient::Resource')
+    request.expects(:send).with( :post, t.send( :base_payload, 'papers') ).returns(xml)
+    
+    t.stubs(:request_generator).returns(request)
+    t.request :papers
+    t.response.should_not == nil
+    
   end
 
   it "can retrieve a list of papers from the server" do
@@ -87,6 +111,7 @@ describe "Taskomaly::API" do
   end
 
   it "can say how many papers have been retrieved" do
+    
     pending "Not done yet"
   end
 

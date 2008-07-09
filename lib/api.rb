@@ -1,5 +1,6 @@
 require 'yaml'
 require 'rest_client'
+require 'rexml/document'
 
 module Taskomaly
   
@@ -41,14 +42,21 @@ module Taskomaly
       raise ArgumentError, "invalid send request type #{type}" unless SUPPORTED_ACTIONS.include? type
 
       begin
-        req = RestClient::Resource.new SERVICE
-        @response = req.send :post, (base_payload type, *args)
+        @req = request_generator
+        @response = @req.send :post, (base_payload type, *args)
+      rescue SocketError
+        raise 'the site appears to be unavailable'
       rescue
-        raise RuntimeError, 'there was an error sending your request'
+        raise 'there was an error processing your request'
       end
+
     end
 
     private
+    
+    def request_generator
+      RestClient::Resource.new SERVICE
+    end
   
     def base_payload method_name, *args
       params = ''
