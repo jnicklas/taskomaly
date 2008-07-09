@@ -69,6 +69,14 @@ describe "Taskomaly::API" do
     t = Taskomaly::API.new :config => API_CONFIG_LOCATION
     t.send( :base_payload, 'test_method', [ 'this is a test', 37, 'signals' ] ).gsub(/[ \n]/, '').should == xml.strip.gsub(/[ \n]/, '')
   end
+  
+  it "only supports the actions specified by the API" do
+    pending "Not done yet"
+  end
+  
+  it "must raise an error if the server is unavailable" do
+    pending "Not done yet"
+  end
 
   it "can retrieve a response from the server" do
     pending "Not done yet"
