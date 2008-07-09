@@ -45,5 +45,13 @@ describe "Taskomaly::Paper" do
   it "can retrieve all tags in a given project" do
     pending "Not done yet"
   end
+  
+  it "can retrieve all comments in a given project" do
+    pending "Not done yet"
+  end
+  
+  it "can say which line in the project each comment is on" do
+    pending "Not done yet"
+  end
 
 end
