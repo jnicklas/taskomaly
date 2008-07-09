@@ -10,7 +10,7 @@ end
  
 desc "generate rdoc documentation"
 Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_files.include('README.rdoc', 'LICENSE', 'TODO').
+  rdoc.rdoc_files.include('README.rdoc', 'LICENSE' ).
     include('lib/**/*.rb')
 
   rdoc.main = "README.rdoc"
