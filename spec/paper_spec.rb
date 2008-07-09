@@ -25,6 +25,10 @@ describe "Taskomaly::Paper" do
   it "can be created from scratch" do
     pending "Not done yet"
   end
+  
+  it "can be loaded in directly from an existing file and parsed" do
+    pending "Not done yet"
+  end
 
   it "can be deleted from the server" do
     pending "Not done yet"
