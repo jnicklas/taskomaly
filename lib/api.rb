@@ -35,9 +35,9 @@ module Taskomaly
     
     private
     
-    def base_payload method_name, extra_data = nil
+    def base_payload method_name, data = nil
       params = ''
-      extra_data = [ extra_data ] if extra_data and extra_data.class != Array
+      extra_data = ([] << data).flatten.compact
       if extra_data
         extra_data.each do |data|
           type = (data.class == Fixnum) ? 'integer' : 'string'
