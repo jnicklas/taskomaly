@@ -25,18 +25,22 @@ describe "Taskomaly::API" do
     t.user.should == 9999
     t.key.should == 'mumbo-jumbo'
     
-    lambda { config_t = Taskomaly::API.new :config => 'dummy_file.yml' }.should_not raise_error( ArgumentError )
+    lambda { config_t = Taskomaly::API.new :config => API_CONFIG_LOCATION }.should_not raise_error( ArgumentError )
   end
 
   it "can load a user ID and API key from a configuration file" do
     t = Taskomaly::API.new :config => API_CONFIG_LOCATION
     t.user.should == API_CONFIG_USER
     t.key.should  == API_CONFIG_KEY
-    
+  end
+  
+  it "should raise an error if a specified configured file does not exist" do
+    lambda { bad_t = Taskomaly::API.new :config => 'i_do_not_exist.yml' }.should raise_error( ArgumentError )
   end
 
   it "needs a place to store a response from the server" do
-    pending "Not done yet"
+    t = Taskomaly::API.new :config => API_CONFIG_LOCATION
+    t.respond_to?( :response, true ).should == true
   end
 
   it "can retrieve a response from the server" do
