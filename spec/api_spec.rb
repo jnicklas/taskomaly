@@ -33,7 +33,7 @@ describe "Taskomaly::API" do
     t.user.should == API_CONFIG_USER
     t.key.should  == API_CONFIG_KEY
   end
-  
+    
   it "should raise an error if a specified configured file does not exist" do
     lambda { bad_t = Taskomaly::API.new :config => 'i_do_not_exist.yml' }.should raise_error( ArgumentError )
   end
@@ -103,20 +103,40 @@ describe "Taskomaly::API" do
     t.stubs(:request_generator).returns(request)
     t.request :papers
     t.response.should_not == nil
-    
   end
 
   it "can retrieve a list of papers from the server" do
-    pending "Not done yet"
-  end
-
-  it "can say how many papers have been retrieved" do
+    xml = <<-XML
+    <?xml version='1.0' encoding='UTF-8'?>
+    <methodResponse>
+    	<params><param><value><array><data>
+    		<value><string>Paper One</string></value>
+    		<value><string>Paper Two</string></value>
+    	</data></array></value></param></params>
+    </methodResponse>
+    XML
     
-    pending "Not done yet"
+    t = Taskomaly::API.new :config => API_CONFIG_LOCATION
+    
+    request = mock('RestClient::Resource')
+    request.expects(:send).with( :post, t.send( :base_payload, 'papers') ).returns(xml)
+    
+    t.stubs(:request_generator).returns(request)
+    papers = t.request :papers
+    papers.sort.should == ['Paper One', 'Paper Two']
+    papers.size.should == 2
   end
 
   it "can synchronize a local file with the server copy" do
     pending "Not done yet"
+  end
+
+  it "can load a configuration file specified relative to ~" do
+    file_loc = '~/.test_tasks.yml'
+    Taskomaly::API.any_instance.stubs(:parse_config).with(File.expand_path(file_loc)).returns({'user' => API_CONFIG_USER, 'key' => API_CONFIG_KEY})
+    t = Taskomaly::API.new :config => file_loc
+    t.user.should == API_CONFIG_USER
+    t.key.should == API_CONFIG_KEY  
   end
 
 end

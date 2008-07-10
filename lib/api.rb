@@ -26,7 +26,7 @@ module Taskomaly
       
       if hash.has_key? :config
         begin
-          @config = YAML::load_file(hash[:config])
+          @config = parse_config(File.expand_path(hash[:config]))
         rescue
           raise ArgumentError, "unable to load from file #{hash[:config]}"
         end
@@ -50,21 +50,35 @@ module Taskomaly
         raise 'there was an error processing your request'
       end
 
+      return handle_response type
     end
 
     private
     
+    def handle_response type
+      doc = REXML::Document.new @response
+      case type
+      when :papers
+        return doc.elements.to_a('//string').map { |m| m.text }
+      end
+      
+    end
+    
     def request_generator
       RestClient::Resource.new SERVICE
     end
-  
+    
+    def parse_config config_filepath
+      YAML::load_file config_filepath
+    end
+    
     def base_payload method_name, *args
       params = ''
       extra_data = ([] << args).flatten.compact
       if extra_data
         extra_data.each do |data|
           type = (data.class == Fixnum) ? 'integer' : 'string'
-          params += "<param><value><#{type}>#{data}</#{type}></value></param>"          
+          params += "<param><value><#{type}>#{data}</#{type}></value></param>\n"          
         end
       end
       <<-XML
