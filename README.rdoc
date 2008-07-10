@@ -1,3 +1,19 @@
 = taskomaly
 
-Documentation coming soon.
+access your Tasko papers. in ruby.
+
+== poof
+
+ t = Taskomaly::API.new :user => 9999, :key => 'd9cca721a735dac4efe709e0f3518373' 
+
+== or
+
+create this file:
+
+ # ~/.tasks.yml
+ user: 9999
+ key: d9cca721a735dac4efe709e0f3518373
+
+and do this:
+
+ t = Taskomaly::API.new :config => '~/.tasks.yml'
