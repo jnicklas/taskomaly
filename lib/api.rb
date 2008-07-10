@@ -7,6 +7,14 @@ module Taskomaly
   SERVICE = 'http://taskodone.com/api'
   SUPPORTED_ACTIONS = [ :papers, :paper, :rename, :edit, :new, :delete ]
   
+  def self.From file
+    return API.new :config => file
+  end
+  
+  def self.With hash
+    return API.new hash
+  end
+  
   class API
     
     attr_reader :response

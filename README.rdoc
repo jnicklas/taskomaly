@@ -4,7 +4,7 @@ access your Tasko papers. in ruby.
 
 == poof
 
- t = Taskomaly::API.new :user => 9999, :key => 'd9cca721a735dac4efe709e0f3518373' 
+ t = Taskomaly::With :user => 9999, :key => 'd9cca721a735dac4efe709e0f3518373' 
 
 == or
 
@@ -16,7 +16,7 @@ create this file:
 
 and do this:
 
- t = Taskomaly::API.new :config => '~/.tasks.yml'
+ t = Taskomaly::From '~/.tasks.yml'
 
 = now what
 

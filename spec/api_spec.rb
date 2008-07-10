@@ -38,11 +38,11 @@ describe "Taskomaly::API" do
   end
   
   it "should work with shortcut methods" do
-    t = Taskomaly::from API_CONFIG_LOCATION
+    t = Taskomaly::From API_CONFIG_LOCATION
     t.user.should == API_CONFIG_USER
     t.key.should == API_CONFIG_KEY
     
-    t = Taskomaly::with :user => 9889, :key => 'hurdy-gurdy'
+    t = Taskomaly::With :user => 9889, :key => 'hurdy-gurdy'
     t.user.should == 9889
     t.key.should == 'hurdy-gurdy'
   end
