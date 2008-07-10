@@ -17,3 +17,9 @@ create this file:
 and do this:
 
  t = Taskomaly::API.new :config => '~/.tasks.yml'
+
+= now what
+
+== getting your papers
+
+ p = t.request :papers # ['Paper One', 'Paper Two']
