@@ -9,7 +9,6 @@ describe "Taskomaly::API" do
   LOCAL_TEST_PROJECT  = File.join(File.dirname(__FILE__), 'fixtures', 'test_project_one.taskPaper')
 
   before do
-    
     opts = { 'user' => API_CONFIG_USER, 'key' => API_CONFIG_KEY }
     File.open( API_CONFIG_LOCATION, 'w' ) do |out|
         YAML.dump( opts, out )
@@ -37,7 +36,17 @@ describe "Taskomaly::API" do
   it "should raise an error if a specified configured file does not exist" do
     lambda { bad_t = Taskomaly::API.new :config => 'i_do_not_exist.yml' }.should raise_error( ArgumentError )
   end
-
+  
+  it "should work with shortcut methods" do
+    t = Taskomaly::from API_CONFIG_LOCATION
+    t.user.should == API_CONFIG_USER
+    t.key.should == API_CONFIG_KEY
+    
+    t = Taskomaly::with :user => 9889, :key => 'hurdy-gurdy'
+    t.user.should == 9889
+    t.key.should == 'hurdy-gurdy'
+  end
+  
   it "needs a place to store a response from the server" do
     t = Taskomaly::API.new :config => API_CONFIG_LOCATION
     t.respond_to?( :response, true ).should == true
