@@ -10,6 +10,7 @@ module Taskomaly
   class API
     
     attr_reader :response
+    attr_reader :papers
     
     # Creates an instance of the API processor with +hash+ passed a set of configuration
     # options in a hash. +hash+ should either be a Tasko user ID and API key (in this case
@@ -59,7 +60,7 @@ module Taskomaly
       doc = REXML::Document.new @response
       case type
       when :papers
-        return doc.elements.to_a('//string').map { |m| m.text }
+        @papers = doc.elements.to_a('//string').map { |m| m.text }
       end
       
     end
