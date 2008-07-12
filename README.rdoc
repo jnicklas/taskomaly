@@ -22,4 +22,13 @@ and do this:
 
 == getting your papers
 
- p = t.request :papers # ['Paper One', 'Paper Two']
+ t.request :papers # ['Paper One', 'Paper Two']
+ p = t.papers.first
+
+ puts p.name # 'Paper One'
+ puts p.body # duh
+
+== change + upload
+
+ p.body["@today"] = "@tomorrow"
+ p.save # true if groovy, false if failed
