@@ -2,12 +2,6 @@ require File.dirname(__FILE__) + '/base'
 
 describe "Taskomaly::API" do
 
-  API_CONFIG_LOCATION = File.join(File.dirname(__FILE__), 'fixtures', 'api_config.yml')
-  API_CONFIG_USER = 8125
-  API_CONFIG_KEY  = 'de18208d17dcc2aa007574fdb7c26322'
-  
-  LOCAL_TEST_PROJECT  = File.join(File.dirname(__FILE__), 'fixtures', 'test_project_one.taskPaper')
-
   before do
     opts = { 'user' => API_CONFIG_USER, 'key' => API_CONFIG_KEY }
     File.open( API_CONFIG_LOCATION, 'w' ) do |out|
@@ -45,6 +39,15 @@ describe "Taskomaly::API" do
     t = Taskomaly::With :user => 9889, :key => 'hurdy-gurdy'
     t.user.should == 9889
     t.key.should == 'hurdy-gurdy'
+  end
+  
+  it "returns papers with itself as an API" do
+    t = Taskomaly::From API_CONFIG_LOCATION
+    request = mock('RestClient::Resource')
+    request.expects(:send).with( :post, t.send( :base_payload, 'paper', 'Test Paper One' ) ).raises(SocketError)
+
+    p = t.request :paper, 'Test Paper One'
+    p.send(:api).should == t
   end
   
   it "needs a place to store a response from the server" do

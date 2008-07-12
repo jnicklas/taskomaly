@@ -2,12 +2,11 @@ require File.dirname(__FILE__) + '/base'
 
 describe "Taskomaly::Paper" do
 
-  TEST_PAPER_ONE_LOC = File.join(File.dirname(__FILE__), 'fixtures', 'test_paper_one.tasks')
-  TEST_PAPER_ONE = File.open(TEST_PAPER_ONE_LOC, "r").readlines
-
   before do
-    t = Taskomaly::API.new :user => 9999, :key => 'd9cca721a735dac4efe709e0f3518373'
-    t.stubs(:papers).returns( ['Test Paper One', 'Test Paper Two'] )
+    @t = Taskomaly::API.new :user => 9999, :key => 'd9cca721a735dac4efe709e0f3518373'
+    @t.stubs(:papers).returns( ['Test Paper One', 'Test Paper Two'] )
+    @t.stubs(:request).with(:paper, 'Test Paper Two').returns(Taskomaly::Paper.new 'Test Paper Two', TEST_PAPERS['test_paper_two.tasks'], @t)
+    
   end
   
   it "requires a name" do
@@ -29,31 +28,38 @@ describe "Taskomaly::Paper" do
   end
 
   it "can be loaded in directly from an existing file and parsed" do
-    p = Taskomaly::Paper::from TEST_PAPER_ONE_LOC
-    p.name.should == 'Test Paper One'
-    p.body.should == TEST_PAPER_ONE
+    p = Taskomaly::Paper::From File.join(File.dirname(__FILE__), 'fixtures', 'existing_test_paper.tasks')
+    p.name.should == 'Existing Test Paper'
+    p.body.should == TEST_PAPERS['existing_test_paper.tasks']
   end
 
   it "can be renamed" do
-    pending "Not done yet"
+    p = Taskomaly::Paper.new 'Test Paper One'
+    p.name.should == 'Test Paper One'
+    p.name = 'Ultra Awesome Test Paper'
+    p.name.should == 'Ultra Awesome Test Paper'
   end
 
   it "can be edited" do
-    pending "Not done yet"
+    p = Taskomaly::Paper.new 'Test Paper One', TEST_PAPERS['test_paper_one.tasks']
+    p.body.should == TEST_PAPER_ONE
+    p.body = "The New Plan:\n- just be awesome @done"
+    p.body.should == "The New Plan:\n- just be awesome @done"
   end
 
   it "requires a place to store an API" do
     p = Taskomaly::Paper.new 'Test Paper'
     p.respond_to?( :api, true ).should == true
   end
-
-  it "has an API set when retrieved from an API object" do
-    p = t.get :paper, 'Test Paper One'
-    p.api.should == t
+  
+  it "cannot be refreshed from the server if not provided an API" do
+    p = Taskomaly::Paper.new 'Test Paper'
+    p.body = "The New Plan:\n- just be awesome @done"
+    p.refresh.should == false
   end
-
+  
   it "can be refreshed from the server" do
-    pending "Not done yet"
+    
   end
   
   it "can be saved to the server" do
