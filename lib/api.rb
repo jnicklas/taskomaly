@@ -59,16 +59,20 @@ module Taskomaly
         raise 'there was an error processing your request'
       end
 
-      return handle_response type
+      return handle_response type, *args
     end
 
     private
     
-    def handle_response type
+    def handle_response type, *args
       doc = REXML::Document.new @response
       case type
       when :papers
         @papers = doc.elements.to_a('//string').map { |m| m.text }
+        return @papers
+      when :paper
+        @data  = doc.elements.to_a('//string').map { |m| m.text }
+        return Taskomaly::Paper.new args.first, @data.last, self         
       end
       
     end
